@@ -1,29 +1,50 @@
-<!DOCTYPE html>
-<head>
-    <meta charset="UTF-8">
-    <title>Connect 4</title>
-</head>
-<body>
-    <!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Connect 4</title>
+  <title>Connect 4 - Hundred Acre Wood</title>
   <style>
-    /* Center the board on the screen */
     body {
+      margin: 0;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #ffffff;
+      overflow: hidden; /* Prevent scrollbars if the mascot touches the edge */
+
+      /* Winnie-inspired palette: soft honey cream gradient with subtle warm stripes */
+      background-color: #FFF3D1;
+      background-image:
+        radial-gradient(circle at 85% 15%, rgba(217, 56, 41, 0.08) 0%, transparent 45%), /* Hint of Winnie's red shirt */
+        linear-gradient(135deg, #FFF8E3 0%, #FFE49E 100%);
+    }
+
+    canvas {
+      position: relative;
+      z-index: 1; /* Keep the board above the mascot if the window shrinks */
+      border-radius: 20px;
+      border: 6px solid #D93829; /* Winnie's iconic red shirt color as the board frame! */
+      box-shadow: 0 16px 36px rgba(138, 75, 8, 0.25);
+    }
+
+    /* Decorative Winnie mascot pinned to the bottom-left corner */
+    .winnie-mascot {
+      position: fixed;
+      bottom: 0;
+      left: 20px;
+      width: 240px; /* Adjust size as needed */
+      height: auto;
+      z-index: 2;
+      pointer-events: none; /* Clicks pass right through so it never blocks gameplay */
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
     }
   </style>
 </head>
 <body>
 
   <canvas id="board" width="700" height="600"></canvas>
+
+  <!-- Decorative character in the bottom-left corner -->
+  <img src="winnie.png" alt="Winnie" class="winnie-mascot">
+
   <script src="gameplay.js"></script>
 
 </body>

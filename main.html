@@ -1,9 +1,54 @@
-<!DOCTYPE html>
 <head>
-    <meta charset="UTF-8">
-    <title>Homepage</title>
+  <meta charset="UTF-8">
+  <title>Connect 4 - Hundred Acre Wood</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 36px; /* Wider spacing between buttons */
+
+      /* Darken the background image with a semi-transparent overlay for better contrast */
+      background-image:
+        linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+        url('hundred_acre_wood.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    button {
+      min-width: 280px; /* Keep both buttons the exact same generous width */
+      padding: 22px 48px; /* Larger button size */
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #4A2504; /* Deep caramel brown text */
+      background-color: #F4A938; /* Honey gold fill */
+      border: 4px solid #FFFDF5; /* Creamy white border to pop against the dark background */
+      border-radius: 40px;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    /* Hover effect: lift up slightly and brighten */
+    button:hover {
+      background-color: #FFC15E;
+      transform: translateY(-4px) scale(1.04);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55);
+    }
+
+    /* Click effect: press down */
+    button:active {
+      transform: translateY(1px) scale(0.98);
+    }
+  </style>
 </head>
 <body>
-  <button onclick="window.location.href='game.html'">Single Player</button>
-  <button onclick="window.location.href='game.html'">Double Players</button>
-</body>
+
+  <button onclick="window.location.href='game.html?mode=single'">Single Player</button>
+  <button onclick="window.location.href='game.html?mode=double'">Double Players</button>
