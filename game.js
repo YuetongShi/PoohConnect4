@@ -65,7 +65,7 @@ class Game {
                     continue;
 
                 // Check all directions
-                for (const [dr, dc] in directions) {
+                for (const [dr, dc] of directions) {
                     let count = 1   // Start from one consecutive piece
                     for (let step = 1; step < 4; step++) {
                         const nr = r + step * dr;
