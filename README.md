@@ -2,7 +2,7 @@
 
 A Hundred Acre Wood–themed **Connect 4** web game built with pure HTML5 Canvas and modular Vanilla JavaScript. Play locally as **Winnie the Pooh** vs. **Tigger** in a honey-filled gravity drop board!
 
-🔗 **Live Demo:** [Play Pooh Connect 4](https://yuetongshi.github.io/PoohConnect4/main.html) *(Enable GitHub Pages on the `main` branch to activate)*
+🔗 **Live Demo:** [Play Pooh Connect 4](https://yuetongshi.github.io/PoohConnect4/main.html)
 
 ---
 
