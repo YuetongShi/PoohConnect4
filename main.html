@@ -26,8 +26,7 @@
       background-repeat: no-repeat;
     }
 
-    /* Storybook title styling */
-        /* Storybook title styling without weird stroke artifacts */
+    /* Storybook title styling without weird stroke artifacts */
     h1 {
       margin: 0 0 16px 0;
       font-size: 76px;
@@ -45,6 +44,7 @@
       user-select: none;
     }
 
+    /* Base button styling (Winnie's honey gold + red shirt border) */
     button {
       min-width: 280px;
       padding: 22px 48px;
@@ -67,6 +67,17 @@
       box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55);
     }
 
+    /* Tigger-themed button for Double Players (vibrant tiger orange + dark stripe border) */
+    button.tigger-btn {
+      color: #2E1302;
+      background-color: #FF8C24;
+      border: 5px solid #3D1E06;
+    }
+
+    button.tigger-btn:hover {
+      background-color: #FFA347;
+    }
+
     button:active {
       transform: translateY(1px) scale(0.98);
     }
@@ -77,6 +88,6 @@
   <h1>Pooh Connect</h1>
 
   <button onclick="window.location.href='game.html?mode=single'">Single Player</button>
-  <button onclick="window.location.href='game.html?mode=double'">Double Players</button>
+  <button class="tigger-btn" onclick="window.location.href='game.html?mode=double'">Double Players</button>
 
 </body>
