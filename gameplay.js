@@ -10,19 +10,12 @@ const RADIUS = 38;
 const urlParams = new URLSearchParams(window.location.search);
 const gameMode = urlParams.get('mode') || 'double';
 
-// Initialize backend game engine
+// Initialize backend game engine & AI agent (Tigger plays as PLAYER_2)
 const game = new Game();
+const aiAgent = gameMode === 'single' ? new Agent(PLAYER_2, 'random') : null;
+let isAITurn = false; // Prevent human clicks while AI is thinking/moving
 
-// Lock single player mode for now until AI is implemented
-if (gameMode === 'single') {
-  game.gameOver = true;
-  setTimeout(() => {
-    alert('Single Player mode is coming soon! Redirecting back to Home...');
-    window.location.href = 'main.html';
-  }, 100);
-}
-
-// Load character piece images (adjust path if not inside Graphics/)
+// Load character piece images
 const poohImg = new Image();
 poohImg.src = 'Graphics/pooh_face.png';
 
@@ -74,6 +67,36 @@ function drawPiece(player, x, y) {
   ctx.restore();
 }
 
+// Helper: Trigger free-fall animation for any move (human or AI)
+function startDropAnimation(targetRow, col) {
+  fallingPiece = {
+    player: game.currentPlayer,
+    targetRow: targetRow,
+    col: col,
+    currentY: -RADIUS,
+    targetY: getCanvasY(targetRow),
+    velocity: 0
+  };
+
+  hoverTarget = null;
+  canvas.style.cursor = 'default';
+  requestAnimationFrame(animateDrop);
+}
+
+// Trigger AI agent's turn with a short natural delay
+function triggerAITurn() {
+  if (!aiAgent || game.gameOver || game.currentPlayer !== aiAgent.player) return;
+
+  isAITurn = true;
+  setTimeout(() => {
+    const move = aiAgent.chooseMove(game);
+    isAITurn = false;
+    if (move) {
+      startDropAnimation(move.row, move.col);
+    }
+  }, 350); // 350ms pause so Tigger's move feels natural
+}
+
 // Render the entire board, pieces, hover highlight, and active falling animation
 function render() {
   // 1. Honey board base
@@ -91,6 +114,7 @@ function render() {
         hoverTarget.row === r &&
         hoverTarget.col === c &&
         !fallingPiece &&
+        !isAITurn &&
         !game.gameOver;
 
       // Empty slot background
@@ -101,7 +125,7 @@ function render() {
 
       // Highlight valid drop target in Winnie's warm honey yellow
       if (isHoveredValidSlot) {
-        ctx.fillStyle = 'rgba(255, 209, 92, 0.55)'; // Winnie yellow highlight
+        ctx.fillStyle = 'rgba(255, 209, 92, 0.55)';
         ctx.fill();
       }
 
@@ -144,23 +168,17 @@ function animateDrop() {
     game.runTurn(targetRow, col);
     const winner = game.updateWinner();
 
-    // Re-evaluate hover state for the next player
-    if (hoverTarget) {
-      const nextRow = findDropRow(hoverTarget.col);
-      // Keep highlight/pointer only if the hovered cell itself is still the valid drop slot
-      if (nextRow === hoverTarget.row && !game.gameOver) {
-        canvas.style.cursor = 'pointer';
-      } else {
-        hoverTarget = null;
-        canvas.style.cursor = 'default';
-      }
-    }
-
     render();
 
     if (winner !== EMPTY) {
       const winnerName = winner === PLAYER_1 ? 'Pooh' : 'Tigger';
       setTimeout(() => alert(`${winnerName} wins!`), 50);
+      return;
+    }
+
+    // If Single Player mode and it's now AI's turn, let Tigger play!
+    if (gameMode === 'single' && game.currentPlayer === aiAgent.player) {
+      triggerAITurn();
     }
     return;
   }
@@ -171,7 +189,7 @@ function animateDrop() {
 
 // Mouse move: highlight ONLY when the cursor is directly over the exact valid drop slot
 canvas.addEventListener('mousemove', (e) => {
-  if (game.gameOver || fallingPiece) {
+  if (game.gameOver || fallingPiece || isAITurn) {
     canvas.style.cursor = 'default';
     hoverTarget = null;
     render();
@@ -211,9 +229,9 @@ canvas.addEventListener('mouseleave', () => {
   render();
 });
 
-// Click: trigger free-fall drop only when clicking a valid drop slot
+// Click: trigger free-fall drop only when clicking a valid drop slot on human's turn
 canvas.addEventListener('click', (e) => {
-  if (game.gameOver || fallingPiece) return;
+  if (game.gameOver || fallingPiece || isAITurn) return;
 
   const rect = canvas.getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
@@ -229,18 +247,7 @@ canvas.addEventListener('click', (e) => {
   // Only drop if the clicked cell is the exact valid slot
   if (targetRow === -1 || clickedBackendRow !== targetRow) return;
 
-  // Start free-fall from above the top of the board
-  fallingPiece = {
-    player: game.currentPlayer,
-    targetRow: targetRow,
-    col: col,
-    currentY: -RADIUS,
-    targetY: getCanvasY(targetRow),
-    velocity: 0
-  };
-
-  canvas.style.cursor = 'default';
-  requestAnimationFrame(animateDrop);
+  startDropAnimation(targetRow, col);
 });
 
 // Ensure board renders once images finish loading

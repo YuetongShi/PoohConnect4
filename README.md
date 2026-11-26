@@ -14,7 +14,7 @@ A Hundred Acre Wood–themed **Connect 4** web game built with pure HTML5 Canvas
 * **Anti-Draw Competitive Rule:** Standard 4-in-a-row detection (horizontal, vertical, and both diagonals). If the board fills up completely without a 4-in-a-row, **Player 2 (Tigger)** automatically wins to offset Player 1's first-move advantage!
 * **Game Modes:**
   * **Double Players:** Local 2-player head-to-head (Available now).
-  * **Single Player:** AI opponent (Coming soon).
+  * **Single Player:** AI opponent (Random agent available. Coming soon: Greedy & Minimax agent).
 
 ---
 
