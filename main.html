@@ -1,6 +1,11 @@
 <head>
   <meta charset="UTF-8">
-  <title>Connect 4 - Hundred Acre Wood</title>
+  <title>Pooh Connect - Hundred Acre Wood</title>
+  <!-- Load storybook-style rounded font from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+
   <style>
     body {
       margin: 0;
@@ -9,40 +14,59 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 36px; /* Wider spacing between buttons */
+      gap: 32px;
+      font-family: 'Fredoka', cursive, sans-serif; /* Apply storybook font globally */
 
-      /* Darken the background image with a semi-transparent overlay for better contrast */
+      /* Darken the background image slightly for high contrast */
       background-image:
         linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
-        url('hundred_acre_wood.png');
+        url('Graphics/hundred_acre_wood.png');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
     }
 
+    /* Storybook title styling */
+        /* Storybook title styling without weird stroke artifacts */
+    h1 {
+      margin: 0 0 16px 0;
+      font-size: 76px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: #FFD15C; /* Warm honey yellow */
+      text-align: center;
+      /* Clean outline using layered shadows instead of -webkit-text-stroke */
+      text-shadow:
+        -3px -3px 0 #5C330A,
+         3px -3px 0 #5C330A,
+        -3px  3px 0 #5C330A,
+         3px  3px 0 #5C330A,
+         0px  8px 20px rgba(0, 0, 0, 0.65);
+      user-select: none;
+    }
+
     button {
-      min-width: 280px; /* Keep both buttons the exact same generous width */
-      padding: 22px 48px; /* Larger button size */
+      min-width: 280px;
+      padding: 22px 48px;
+      font-family: 'Fredoka', cursive, sans-serif;
       font-size: 24px;
-      font-weight: bold;
+      font-weight: 700;
       letter-spacing: 1px;
-      color: #4A2504; /* Deep caramel brown text */
-      background-color: #F4A938; /* Honey gold fill */
-      border: 4px solid #FFFDF5; /* Creamy white border to pop against the dark background */
+      color: #4A2504;
+      background-color: #F4A938;
+      border: 5px solid #D93829; /* Winnie's iconic red shirt border */
       border-radius: 40px;
       cursor: pointer;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
       transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
     }
 
-    /* Hover effect: lift up slightly and brighten */
     button:hover {
       background-color: #FFC15E;
       transform: translateY(-4px) scale(1.04);
       box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55);
     }
 
-    /* Click effect: press down */
     button:active {
       transform: translateY(1px) scale(0.98);
     }
@@ -50,5 +74,9 @@
 </head>
 <body>
 
+  <h1>Pooh Connect</h1>
+
   <button onclick="window.location.href='game.html?mode=single'">Single Player</button>
   <button onclick="window.location.href='game.html?mode=double'">Double Players</button>
+
+</body>

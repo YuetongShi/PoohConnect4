@@ -1,8 +1,3 @@
-// Constants
-const EMPTY = 0;
-const PLAYER_1 = 1;
-const PLAYER_2 = 2;
-
 class Board{
     constructor() {
         this.rows = 6;
