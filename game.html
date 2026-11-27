@@ -8,7 +8,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden; /* Prevent scrollbars if the mascot touches the edge */
+      overflow: hidden; /* Prevent scrollbars if the mascots touch the edge */
 
       /* Winnie-inspired palette: soft honey cream gradient with subtle warm stripes */
       background-color: #FFF3D1;
@@ -19,9 +19,9 @@
 
     canvas {
       position: relative;
-      z-index: 1; /* Keep the board above the mascot if the window shrinks */
+      z-index: 1; /* Keep the board above the mascots if the window shrinks */
       border-radius: 20px;
-      border: 6px solid #D93829; /* Winnie's iconic red shirt color as the board frame! */
+      border: 6px solid #D93829; /* Winnie's iconic red shirt color as the board frame */
       box-shadow: 0 16px 36px rgba(138, 75, 8, 0.25);
     }
 
@@ -30,7 +30,19 @@
       position: fixed;
       bottom: 0;
       left: 20px;
-      width: 240px; /* Adjust size as needed */
+      width: 240px;
+      height: auto;
+      z-index: 2;
+      pointer-events: none; /* Clicks pass right through so it never blocks gameplay */
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+    }
+
+    /* Decorative Tigger mascot pinned to the bottom-right corner */
+    .tigger-mascot {
+      position: fixed;
+      bottom: 0;
+      right: 20px;
+      width: 240px;
       height: auto;
       z-index: 2;
       pointer-events: none; /* Clicks pass right through so it never blocks gameplay */
@@ -42,8 +54,9 @@
 
   <canvas id="board" width="700" height="600"></canvas>
 
-  <!-- Decorative character in the bottom-left corner -->
+  <!-- Decorative characters in the bottom corners -->
   <img src="Graphics/winnie.png" alt="Winnie" class="winnie-mascot">
+  <img src="Graphics/tigger.png" alt="Tigger" class="tigger-mascot">
 
   <script src="board.js"></script>
   <script src="game.js"></script>
