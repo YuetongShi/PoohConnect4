@@ -52,3 +52,9 @@ PoohConnect4/
 ├── gameplay.js         # View & Controller: Canvas rendering, mouse hit-testing & drop animations
 ├── notes.md            # Engineering & architecture design notes
 └── README.md           # Project documentation
+
+## ⚠️ Disclaimer & Copyright Notice
+
+* **Personal & Educational Use Only:** This project (*Pooh Connect*) was created strictly for personal learning, algorithmic exploration, and portfolio demonstration purposes.
+* **Non-Commercial:** This application is completely non-profit. Commercial use, monetization, redistribution for profit, or any form of unauthorized commercial adaptation is strictly prohibited.
+* **No Official Affiliation:** Winnie the Pooh and all related characters, names, and visual themes are trademarks and copyrights of **The Walt Disney Company** (and the estate of A.A. Milne / E.H. Shepard). This is an unofficial fan-made project and is **not** affiliated with, endorsed by, sponsored by, or connected to Disney in any way.
