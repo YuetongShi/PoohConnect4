@@ -171,12 +171,15 @@ function animateDrop() {
     render();
 
     if (winner !== EMPTY) {
-      const winnerName = winner === PLAYER_1 ? 'Pooh' : 'Tigger';
-      setTimeout(() => alert(`${winnerName} wins!`), 50);
+      // Wait 700ms so the player can clearly see the winning 4-in-a-row piece land
+      setTimeout(() => {
+        window.location.href = winner === PLAYER_1 ? 'winnie.html' : 'tigger.html';
+      }, 700);
       return;
     }
 
-    // If Single Player mode and it's now AI's turn, let Tigger play!
+
+    // If Single Player mode, and it's now AI's turn, let Tigger play!
     if (gameMode === 'single' && game.currentPlayer === aiAgent.player) {
       triggerAITurn();
     }
