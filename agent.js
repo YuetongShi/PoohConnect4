@@ -1,21 +1,28 @@
 class Agent {
-  // Currently AI plays as PLAYER_2, supporting 'random' and 'greedy' (minimax coming next)
-  constructor(player = PLAYER_2, strategy = 'greedy') {
+  // Configurable strategy ('random' | 'greedy' | 'minimax') and search depth (maxDepth)
+  constructor(player = PLAYER_2, strategy = 'minimax', maxDepth = 2) {
     this.player = player;
     this.strategy = strategy;
+    this.maxDepth = maxDepth;
   }
 
-  getValidMoves(game) {
+  // Scan board for all gravity-legal moves, ordered center-outward for faster Alpha-Beta pruning
+  getValidMovesOnBoard(board, player) {
     const validMoves = [];
-    const rows = game.board.rows;
-    const cols = game.board.cols;
+    const rows = board.rows;
+    const cols = board.cols;
 
-    for (let c = 0; c < cols; c++) {
+    // Center-first column ordering improves move quality and pruning efficiency
+    const colOrder = [3, 2, 4, 1, 5, 0, 6].filter(c => c < cols);
+
+    for (const c of colOrder) {
       for (let r = 0; r < rows; r++) {
-        // Bottom-up scan: the first valid cell in column c is the only gravity-legal move
-        if (game.isValidMove(this.player, r, c)) {
-          validMoves.push({ row: r, col: c });
-          break;
+        if (board.getCell(r, c) === EMPTY) {
+          // Gravity check: either bottom row (r === 0) or cell directly below is occupied
+          if (r === 0 || board.getCell(r - 1, c) !== EMPTY) {
+            validMoves.push({ row: r, col: c });
+          }
+          break; // Only the lowest empty slot in column c is valid
         }
       }
     }
@@ -23,13 +30,20 @@ class Agent {
     return validMoves;
   }
 
-  // Choose move according to strategy ('random' | 'greedy')
+  // Wrapper for external calls passing a Game instance
+  getValidMoves(game) {
+    return this.getValidMovesOnBoard(game.board, this.player);
+  }
+
+  // Dispatch move selection based on configured strategy
   chooseMove(game) {
     if (game.gameOver || game.currentPlayer !== this.player) {
       return null;
     }
 
     switch (this.strategy) {
+      case 'minimax':
+        return this.chooseMinimaxMove(game);
       case 'greedy':
         return this.chooseGreedyMove(game);
       case 'random':
@@ -46,7 +60,7 @@ class Agent {
     return validMoves[randomIndex];
   }
 
-  // Greedy 1-ply lookahead: simulate each valid move, evaluate, and pick the highest score
+  // Greedy 1-ply lookahead using board.clone()
   chooseGreedyMove(game) {
     const validMoves = this.getValidMoves(game);
     if (validMoves.length === 0) return null;
@@ -55,14 +69,10 @@ class Agent {
     let bestMoves = [];
 
     for (const move of validMoves) {
-      // 1. Simulate placing piece on the board
-      game.board.grid[move.row][move.col] = this.player;
+      const clonedBoard = game.board.clone();
+      clonedBoard.setCell(move.row, move.col, this.player);
 
-      // 2. Evaluate the resulting board state
-      const score = this.eval(game);
-
-      // 3. Undo simulated move cleanly
-      game.board.grid[move.row][move.col] = EMPTY;
+      const score = this.evalBoard(clonedBoard);
 
       if (score > bestScore) {
         bestScore = score;
@@ -72,16 +82,103 @@ class Agent {
       }
     }
 
-    // Break ties randomly so gameplay stays varied
     const randomIndex = Math.floor(Math.random() * bestMoves.length);
     return bestMoves[randomIndex];
   }
 
-  // Zero-sum heuristic evaluation from this.player's perspective, positive means advantage
-  eval(game) {
+  // Root entry point for Minimax with Alpha-Beta pruning up to `this.maxDepth`
+  chooseMinimaxMove(game) {
+    const validMoves = this.getValidMoves(game);
+    if (validMoves.length === 0) return null;
+
     const opponent = this.player === PLAYER_1 ? PLAYER_2 : PLAYER_1;
-    const myScore = this.evaluatePlayer(game.board, this.player);
-    const oppScore = this.evaluatePlayer(game.board, opponent);
+    let bestScore = -Infinity;
+    let bestMoves = [];
+    let alpha = -Infinity;
+    const beta = Infinity;
+
+    for (const move of validMoves) {
+      // Use board.clone() to safely simulate the move without mutating live game state
+      const clonedBoard = game.board.clone();
+      clonedBoard.setCell(move.row, move.col, this.player);
+
+      // Next ply belongs to the minimizing opponent (depth - 1)
+      const score = this.minimax(clonedBoard, this.maxDepth - 1, alpha, beta, false, opponent);
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestMoves = [move];
+      } else if (score === bestScore) {
+        bestMoves.push(move);
+      }
+
+      alpha = Math.max(alpha, bestScore);
+    }
+
+    // Break ties randomly among equally optimal moves
+    const randomIndex = Math.floor(Math.random() * bestMoves.length);
+    return bestMoves[randomIndex];
+  }
+
+  // Recursive Minimax search with Alpha-Beta pruning
+  minimax(board, depth, alpha, beta, isMaximizing, currentTurnPlayer) {
+    const currentEval = this.evalBoard(board);
+
+    // Terminal state check (immediate win/loss at 500,000) or depth limit reached
+    if (depth === 0 || Math.abs(currentEval) >= 400000) {
+      return currentEval;
+    }
+
+    const validMoves = this.getValidMovesOnBoard(board, currentTurnPlayer);
+    if (validMoves.length === 0) {
+      // Board is completely full: per game rules, Player 2 wins tiebreakers
+      return this.player === PLAYER_2 ? 500000 : -500000;
+    }
+
+    const nextPlayer = currentTurnPlayer === PLAYER_1 ? PLAYER_2 : PLAYER_1;
+
+    if (isMaximizing) {
+      let maxEval = -Infinity;
+      for (const move of validMoves) {
+        const clonedBoard = board.clone();
+        clonedBoard.setCell(move.row, move.col, currentTurnPlayer);
+
+        const evaluation = this.minimax(clonedBoard, depth - 1, alpha, beta, false, nextPlayer);
+        maxEval = Math.max(maxEval, evaluation);
+        alpha = Math.max(alpha, evaluation);
+
+        if (beta <= alpha) break; // Beta cut-off
+      }
+      return maxEval;
+    } else {
+      let minEval = Infinity;
+      for (const move of validMoves) {
+        const clonedBoard = board.clone();
+        clonedBoard.setCell(move.row, move.col, currentTurnPlayer);
+
+        const evaluation = this.minimax(clonedBoard, depth - 1, alpha, beta, true, nextPlayer);
+        minEval = Math.min(minEval, evaluation);
+        beta = Math.min(beta, evaluation);
+
+        if (beta <= alpha) break; // Alpha cut-off
+      }
+      return minEval;
+    }
+  }
+
+  // Wrapper for external eval(game) calls
+  eval(game) {
+    return this.evalBoard(game.board);
+  }
+
+  // Zero-sum heuristic evaluation on a Board instance
+  evalBoard(board) {
+    const opponent = this.player === PLAYER_1 ? PLAYER_2 : PLAYER_1;
+    const myScore = this.evaluatePlayer(board, this.player);
+    if (myScore >= 500000) return 500000;
+
+    const oppScore = this.evaluatePlayer(board, opponent);
+    if (oppScore >= 500000) return -500000;
 
     return myScore - oppScore;
   }
@@ -142,7 +239,7 @@ class Agent {
 
           // Immediate 4-in-a-row win
           if (playerPieces === 4) {
-            return 50000;
+            return 500000;
           }
 
           // Unblocked 4-cell direction with at least 1 piece

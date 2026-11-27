@@ -12,7 +12,7 @@ const gameMode = urlParams.get('mode') || 'double';
 
 // Initialize backend game engine & AI agent (Tigger plays as PLAYER_2)
 const game = new Game();
-const aiAgent = gameMode === 'single' ? new Agent(PLAYER_2, 'greedy') : null;
+const aiAgent = gameMode === 'single' ? new Agent(PLAYER_2, 'minimax', 2) : null;
 let isAITurn = false; // Prevent human clicks while AI is thinking/moving
 
 // Load character piece images
