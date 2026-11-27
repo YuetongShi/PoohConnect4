@@ -52,6 +52,7 @@ PoohConnect4/
 ├── gameplay.js         # View & Controller: Canvas rendering, mouse hit-testing & drop animations
 ├── notes.md            # Engineering & architecture design notes
 └── README.md           # Project documentation
+```
 
 ## ⚠️ Disclaimer & Copyright Notice
 
