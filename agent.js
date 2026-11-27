@@ -166,11 +166,6 @@ class Agent {
     }
   }
 
-  // Wrapper for external eval(game) calls
-  eval(game) {
-    return this.evalBoard(game.board);
-  }
-
   // Zero-sum heuristic evaluation on a Board instance
   evalBoard(board) {
     const opponent = this.player === PLAYER_1 ? PLAYER_2 : PLAYER_1;
