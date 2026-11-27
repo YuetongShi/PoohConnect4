@@ -53,6 +53,7 @@ PoohConnect4/
 ├── notes.md            # Engineering & architecture design notes
 └── README.md           # Project documentation
 ```
+---
 
 ## ⚠️ Disclaimer & Copyright Notice
 
