@@ -142,7 +142,7 @@ class Agent {
 
           // Immediate 4-in-a-row win
           if (playerPieces === 4) {
-            return 10000;
+            return 50000;
           }
 
           // Unblocked 4-cell direction with at least 1 piece
